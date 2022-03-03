@@ -1,0 +1,158 @@
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>Event Sourcing | blog.Ælfsyg</title><meta name=keywords content="programming,software architecture,event sourcing">
+<meta name=description content="This article is in the process of being written.
+Introduction   State isn't stored. We rebuild it every time we need to query or do something to it. It has its drawbacks, but it does allow us to do things that would be impossible otherwise. We can view out system's history with new perspectives, or add in missed past events. Our view of the past is necessarily wrong for any complex system and yet we design systems that lack any way to account for that.">
+<meta name=author content="Ælfsyg">
+<link rel=canonical href=http://blog.aelfsyg.com/posts/event-sourcing/>
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.07309070dca6302e60513a91314c0a2af498dfad5ed473912a377ca779ee5e2d.css integrity="sha256-BzCQcNymMC5gUTqRMUwKKvSY361e1HORKjd8p3nuXi0=" rel="preload stylesheet" as=style>
+<link rel=preload href=/img/ae-logo-trans.png as=image>
+<script defer crossorigin=anonymous src=/assets/js/highlight.min.c3d1f34b111eeafb0ddd0c44789b78b005fe986179dfcfa441d58ee97e8e3b94.js integrity="sha256-w9HzSxEe6vsN3QxEeJt4sAX+mGF538+kQdWO6X6OO5Q=" onload=hljs.initHighlightingOnLoad()></script>
+<link rel=icon href=http://blog.aelfsyg.com/img/ae-logo-trans.png>
+<link rel=icon type=image/png sizes=16x16 href=http://blog.aelfsyg.com/favicon-16x16.png>
+<link rel=icon type=image/png sizes=32x32 href=http://blog.aelfsyg.com/favicon-32x32.png>
+<link rel=apple-touch-icon href=http://blog.aelfsyg.com/img/ae-logo-trans.png>
+<link rel=mask-icon href=http://blog.aelfsyg.com/safari-pinned-tab.svg>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<noscript>
+<style>#theme-toggle,.top-link{display:none}</style></noscript><script type=text/javascript async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=default"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-15THDLZMKJ"></script>
+<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-15THDLZMKJ",{anonymize_ip:!1})}</script>
+<meta property="og:title" content="Event Sourcing">
+<meta property="og:description" content="This article is in the process of being written.
+Introduction   State isn't stored. We rebuild it every time we need to query or do something to it. It has its drawbacks, but it does allow us to do things that would be impossible otherwise. We can view out system's history with new perspectives, or add in missed past events. Our view of the past is necessarily wrong for any complex system and yet we design systems that lack any way to account for that.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://blog.aelfsyg.com/posts/event-sourcing/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2021-11-17T00:00:00+00:00">
+<meta property="article:modified_time" content="2021-11-17T00:00:00+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Event Sourcing">
+<meta name=twitter:description content="This article is in the process of being written.
+Introduction   State isn't stored. We rebuild it every time we need to query or do something to it. It has its drawbacks, but it does allow us to do things that would be impossible otherwise. We can view out system's history with new perspectives, or add in missed past events. Our view of the past is necessarily wrong for any complex system and yet we design systems that lack any way to account for that.">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":2,"name":"Posts","item":"http://blog.aelfsyg.com/posts/"},{"@type":"ListItem","position":3,"name":"Event Sourcing","item":"http://blog.aelfsyg.com/posts/event-sourcing/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"Event Sourcing","name":"Event Sourcing","description":"This article is in the process of being written.\nIntroduction   State isn\u0026#39;t stored. We rebuild it every time we need to query or do something to it. It has its drawbacks, but it does allow us to do things that would be impossible otherwise. We can view out system\u0026#39;s history with new perspectives, or add in missed past events. Our view of the past is necessarily wrong for any complex system and yet we design systems that lack any way to account for that.","keywords":["programming","software architecture","event sourcing"],"articleBody":"  This article is in the process of being written.\nIntroduction   State isn't stored. We rebuild it every time we need to query or do something to it. It has its drawbacks, but it does allow us to do things that would be impossible otherwise. We can view out system's history with new perspectives, or add in missed past events. Our view of the past is necessarily wrong for any complex system and yet we design systems that lack any way to account for that.\n  My projects   I've worked a fair bit with event sourcing:\n Rashomon (GitHub) Demesne (GitHub) Eventstore.clj (GitHub)  All articles with the 'event sourcing' tag\n  History   Greg Young Event Store DB\n  An event store   Rebuilding from known states   Reverting   Diagnosing   Reinterpreting   Could be useful for A/B testing Loading from a configuration service Accepting configuration from a user (SAAS)\n Useful when? The state of an aggregate is tied up with its history\n Example\n Deactivating accounts after a period of inactivity, client requests changes to the account. Developers have to make the change, try and track down the accounts that were affected. How do you do that? Do you really have those logs? Can you use them to change your DB? Will you not accidentally reactivate someone who really shouldn't be? In the meantime, you have clients who've tried to perform actions on their account but were rejected because their account was deactivated. Your operations team are spending their time finding the details of the failed actions to retry it. Why not just reinterpret the attempt in the new context of an active account?\n Can I come up with a more human-centred analogy?\n Events mean different things in different contexts.\n What's the difference between an event and a command? Commands can be rejected? Is this actually the distinction?\n Where is event sourcing inappropriate? Simple domains. Where rebuilding the domain is prohibitively expensive. When the team don't understand it.\n1 2 3 4 5  account.created account.deactivated.inactivity user.payment.requested user.payment.declined account.address.requested     We can change our perspectives to ignore deactivations that happen for bad reasons. In the new light where we ignore account.deactivated.inactivity if it lists too short an inactivity period, the user is now active in the context of subsequent events. We would not want to reinterpret the payment requests however. Thankfully, these events, if stored in the user's stream of events at all, are just links to events in the Payments aggregate or domain. Loading the Account aggregate, and it being active will not retrigger these payments, thankfully.\n Whilst old context, address didn't change\n  Drawbacks and difficulties   Related patterns   Correlation and causation IDs\n  Software   Event Store DB\n Kafka\n  ","wordCount":"436","inLanguage":"en","datePublished":"2021-11-17T00:00:00Z","dateModified":"2021-11-17T00:00:00Z","author":{"@type":"Person","name":"Ælfsyg"},"mainEntityOfPage":{"@type":"WebPage","@id":"http://blog.aelfsyg.com/posts/event-sourcing/"},"publisher":{"@type":"Organization","name":"blog.Ælfsyg","logo":{"@type":"ImageObject","url":"http://blog.aelfsyg.com/img/ae-logo-trans.png"}}}</script>
+</head><body class=dark id=top>
+<script>localStorage.getItem("pref-theme")==="light"&&document.body.classList.remove("dark")</script>
+<header class=header>
+<nav class=nav>
+<div class=logo>
+<a href=http://blog.aelfsyg.com accesskey=h title="blog.Ælfsyg (Alt + H)">
+<img src=http://blog.aelfsyg.com/img/ae-logo-trans.png alt=logo aria-label=logo height=" 30px">blog.Ælfsyg</a>
+<span class=logo-switches>
+<button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+</span>
+</div><ul id=menu>
+<li>
+<a href=http://blog.aelfsyg.com/tags/ title=tags>
+<span>tags</span>
+</a>
+</li><li>
+<a href=https://blog.aelfsyg.com/index.xml title=rss>
+<span>rss</span>
+</a>
+</li></ul></nav></header><main class=main>
+<article class=post-single>
+<header class=post-header>
+<h1 class=post-title>
+Event Sourcing
+</h1><div class=post-meta><span title="2021-11-17 00:00:00 +0000 UTC">2021—11—17 Wed</span>&nbsp;·&nbsp;Ælfsyg
+</div><ul class=post-tags>
+<li><a href=http://blog.aelfsyg.com/tags/programming/>programming</a></li><li><a href=http://blog.aelfsyg.com/tags/software-architecture/>software architecture</a></li><li><a href=http://blog.aelfsyg.com/tags/event-sourcing/>event sourcing</a></li></ul></header><div class=post-content>
+<p>
+<em>This article is in the process of being written.</em></p><div id=outline-container-headline-1 class=outline-2>
+<h2 id=headline-1>
+Introduction
+</h2><div id=outline-text-headline-1 class=outline-text-2>
+<p>
+State isn't stored. We rebuild it every time we need to query or do something to it. It has its drawbacks, but it does allow us to do things that would be impossible otherwise. We can view out system's history with new perspectives, or add in missed past events. Our view of the past is necessarily wrong for any complex system and yet we design systems that lack any way to account for that.</p></div></div><div id=outline-container-headline-2 class=outline-2>
+<h2 id=headline-2>
+My projects
+</h2><div id=outline-text-headline-2 class=outline-text-2>
+<p>
+I've worked a fair bit with event sourcing:</p><ul>
+<li><a href=http://blog.aelfsyg.com/posts/rashomon/>Rashomon</a> (<a href=https://github.com/Aelfsyg/rashomon>GitHub</a>)</li><li><a href=http://blog.aelfsyg.com/posts/demesne/>Demesne</a> (<a href=https://github.com/Aelfsyg/demesne>GitHub</a>)</li><li>Eventstore.clj (<a href=https://github.com/Aelfsyg/eventstore.clj>GitHub</a>)</li></ul><p><a href=/tags/event-sourcing/>All articles with the <em>'event sourcing'</em> tag</a></p></div></div><div id=outline-container-headline-3 class=outline-2>
+<h2 id=headline-3>
+History
+</h2><div id=outline-text-headline-3 class=outline-text-2>
+<p>
+Greg Young
+Event Store DB</p></div></div><div id=outline-container-headline-4 class=outline-2>
+<h2 id=headline-4>
+An event store
+</h2></div><div id=outline-container-headline-5 class=outline-2>
+<h2 id=headline-5>
+Rebuilding from known states
+</h2></div><div id=outline-container-headline-6 class=outline-2>
+<h2 id=headline-6>
+Reverting
+</h2></div><div id=outline-container-headline-7 class=outline-2>
+<h2 id=headline-7>
+Diagnosing
+</h2></div><div id=outline-container-headline-8 class=outline-2>
+<h2 id=headline-8>
+Reinterpreting
+</h2><div id=outline-text-headline-8 class=outline-text-2>
+<p>
+Could be useful for A/B testing
+Loading from a configuration service
+Accepting configuration from a user (SAAS)</p><p>
+Useful when?
+The state of an aggregate is tied up with its history</p><p>
+Example</p><p>
+Deactivating accounts after a period of inactivity, client requests changes to the account. Developers have to make the change, try and track down the accounts that were affected. How do you do that? Do you really have those logs? Can you use them to change your DB? Will you not accidentally reactivate someone who really shouldn't be? In the meantime, you have clients who've tried to perform actions on their account but were rejected because their account was deactivated. Your operations team are spending their time finding the details of the failed actions to retry it. Why not just reinterpret the attempt in the new context of an active account?</p><p>
+Can I come up with a more human-centred analogy?</p><p>
+Events mean different things in different contexts.</p><p>
+What's the difference between an event and a command? Commands can be rejected? Is this actually the distinction?</p><p>
+Where is event sourcing inappropriate? Simple domains. Where rebuilding the domain is prohibitively expensive. When the team don't understand it.</p><div class="src src-text">
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>account.created
+</span></span><span class=line><span class=cl>account.deactivated.inactivity
+</span></span><span class=line><span class=cl>user.payment.requested
+</span></span><span class=line><span class=cl>user.payment.declined
+</span></span><span class=line><span class=cl>account.address.requested</span></span></code></pre></td></tr></table></div></div></div><p>
+We can change our perspectives to ignore deactivations that happen for bad reasons. In the new light where we ignore <code>account.deactivated.inactivity</code> if it lists too short an inactivity period, the user is now active in the context of subsequent events. We would not want to reinterpret the payment requests however. Thankfully, these events, if stored in the user's stream of events at all, are just links to events in the Payments aggregate or domain. Loading the Account aggregate, and it being active will not retrigger these payments, thankfully.</p><p>
+Whilst old context, address didn't change</p></div></div><div id=outline-container-headline-9 class=outline-2>
+<h2 id=headline-9>
+Drawbacks and difficulties
+</h2></div><div id=outline-container-headline-10 class=outline-2>
+<h2 id=headline-10>
+Related patterns
+</h2><div id=outline-text-headline-10 class=outline-text-2>
+<p>
+<a href=http://blog.aelfsyg.com/posts/corr-caus-ids/>Correlation and causation IDs</a></p></div></div><div id=outline-container-headline-11 class=outline-2>
+<h2 id=headline-11>
+Software
+</h2><div id=outline-text-headline-11 class=outline-text-2>
+<p>
+Event Store DB</p><p>
+Kafka</p></div></div></div><footer class=post-footer>
+<ul class=post-tags>
+<li><a href=http://blog.aelfsyg.com/tags/programming/>programming</a></li><li><a href=http://blog.aelfsyg.com/tags/software-architecture/>software architecture</a></li><li><a href=http://blog.aelfsyg.com/tags/event-sourcing/>event sourcing</a></li></ul></footer><div id=disqus_thread>
+</div><script>(function(){var e=document,t=e.createElement("script");t.src="https://aelfsyg.disqus.com/embed.js",t.setAttribute("data-timestamp",+new Date),(e.head||e.body).appendChild(t)})()</script>
+<noscript>
+Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a>
+</noscript></article></main><footer class=footer>
+<span>&copy; 2022 <a href=http://blog.aelfsyg.com>blog.Ælfsyg</a></span>
+<span>
+Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
+</span>
+</footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a>
+<script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(t){t.preventDefault();var e=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(e)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(e)}']`).scrollIntoView({behavior:"smooth"}),e==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${e}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+<script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script>
+</body></html>
