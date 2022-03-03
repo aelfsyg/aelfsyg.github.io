@@ -1,0 +1,3 @@
+* æ/blog.aelfsyg.com
+
+This is my [[https://blog.aelfsyg.com][personal blog]], created using [[https://gohugo.io/][Hugo]], and hosted on [[https://pages.github.com/][GitHub Pages]].

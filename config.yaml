@@ -1,0 +1,54 @@
+baseURL: 'http://blog.aelfsyg.com'
+languageCode: en-gb
+title: blog.Ælfsyg
+theme: PaperMod
+
+googleAnalytics: 'G-15THDLZMKJ'
+
+disqusShortName: aelfsyg
+
+params:
+  env: production
+  author: Ælfsyg
+  assets:
+    apple_touch_icon: /img/ae-logo-trans.png
+    disableHLJS: false
+    favicon: /img/ae-logo-trans.png
+  comments: true
+  DateFormat: 2006—01—02 Mon
+  defaultTheme: dark
+  label:
+    icon: /img/ae-logo-trans.png
+  disableSpecial1stPost: true
+  socialIcons:
+    - name: "rss"
+      url: https://blog.aelfsyg.com/index.xml
+
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
+
+buildFuture: true
+
+paginate: 50
+
+markup:
+  highlight:
+    codeFences: true
+    guessSyntax: true
+    lineNos: true
+    style: paraiso-dark
+    noClasses: false
+
+menu:
+  main:
+    - identifier: tags
+      name: tags
+      url: /tags/
+      weight: 10
+    - identifier: rss
+      name: rss
+      url: https://blog.aelfsyg.com/index.xml
+      weight: 20
