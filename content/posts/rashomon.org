@@ -1,0 +1,37 @@
+---
+title: "æ/Rashomon"
+date: 2021-11-19T00:00:00+00:00
+draft: false
+summary: See things from another perspective; Clojure functions that build datastructures from events.
+tags: [ "programming", "clojure", "event sourcing", "film" ]
+---
+
+/Clojure functions that build datastructures from events with dynamic perspectives./
+
+/Rashomon/ is a 1950 psychological thriller film directed by Akira Kurosawa. Based on Ryunosuke Akutagawa's /In A Grove/, it tells the story of a samurai's death from the perspectives of: the bandit who killed him, his wife, the samurai himself, and finally a woodcutter, none of whom can agree at the subsequent trial.
+
+It was the first Japanese film to receive international acclaim, doing so after being panned by Japanese critics. From the film came the term /Rashomon effect/, used to describe the situation in which an event is given differing or contradictory interpretations by different observers.
+
+I was inspired by the film when writing [[https://github.com/Aelfsyg/rashomon][Rashomon]], a library for Clojure which rebuilds datastructures from events, with emphasis placed on the flexibility of /perspectives/, the functions that act for each event. In homage to its eponym it uses /testimony/ to refer to the datastructure being constructed.
+
+#+begin_src clojure
+(def bandit-perspectives
+  {:ae.rashomon.event.type/foo
+   ,   (fn [testimony event] (assoc testimony {:guilt? (not (:qux event))}))})
+
+(def samurai-perspectives
+  {:ae.rashomon.event.type/foo
+   ,   (fn [testimony event] (assoc testimony {:guilt? (:qux event)}))})
+
+(rashomon/apply-event
+ testimony
+ bandit-perspectives
+ {:ae.rashomon.event/type :ae.rashomon.event.type/foo
+  :qux :guilty})
+
+(rashomon/build samurai-perspectives events)
+   #+end_src
+
+By changing the set of perspectives we use when applying the event, the testimony we produce can be completely different. This functionality makes it incredibly easy to change our interpretation of events, do A/B testing where different users have different interpretations, read perspectives from configuration.
+
+I think this is quite novel and I'm excited to see what you can create with it.

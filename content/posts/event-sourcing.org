@@ -1,0 +1,80 @@
+---
+title: "Event Sourcing"
+date: 2021-11-17T00:00:00Z
+draft: false
+tags: [ "programming", "software architecture", "event sourcing" ]
+---
+
+/This article is in the process of being written./
+
+* Introduction
+
+State isn't stored. We rebuild it every time we need to query or do something to it. It has its drawbacks, but it does allow us to do things that would be impossible otherwise. We can view out system's history with new perspectives, or add in missed past events. Our view of the past is necessarily wrong for any complex system and yet we design systems that lack any way to account for that.
+
+* My projects
+
+I've worked a fair bit with event sourcing:
+
+- [[{{< ref "rashomon.org" >}}][Rashomon]] ([[https://github.com/Aelfsyg/rashomon][GitHub]])
+- [[{{<ref "demesne.org">}}][Demesne]] ([[https://github.com/Aelfsyg/demesne][GitHub]])
+- Eventstore.clj ([[https://github.com/Aelfsyg/eventstore.clj][GitHub]])
+
+[[{{< relref "/tags/event-sourcing/">}}][All articles with the /'event sourcing'/ tag]]
+
+* History
+
+Greg Young
+Event Store DB
+
+* An event store
+
+* Rebuilding from known states
+
+* Reverting
+
+* Diagnosing
+
+* Reinterpreting
+
+Could be useful for A/B testing
+Loading from a configuration service
+Accepting configuration from a user (SAAS)
+
+Useful when?
+The state of an aggregate is tied up with its history
+
+Example
+
+Deactivating accounts after a period of inactivity, client requests changes to the account. Developers have to make the change, try and track down the accounts that were affected. How do you do that? Do you really have those logs? Can you use them to change your DB? Will you not accidentally reactivate someone who really shouldn't be? In the meantime, you have clients who've tried to perform actions on their account but were rejected because their account was deactivated. Your operations team are spending their time finding the details of the failed actions to retry it. Why not just reinterpret the attempt in the new context of an active account?
+
+Can I come up with a more human-centred analogy?
+
+Events mean different things in different contexts.
+
+What's the difference between an event and a command? Commands can be rejected? Is this actually the distinction?
+
+Where is event sourcing inappropriate? Simple domains. Where rebuilding the domain is prohibitively expensive. When the team don't understand it.
+
+#+begin_src
+account.created
+account.deactivated.inactivity
+user.payment.requested
+user.payment.declined
+account.address.requested
+#+end_src
+
+We can change our perspectives to ignore deactivations that happen for bad reasons. In the new light where we ignore ~account.deactivated.inactivity~ if it lists too short an inactivity period, the user is now active in the context of subsequent events. We would not want to reinterpret the payment requests however. Thankfully, these events, if stored in the user's stream of events at all, are just links to events in the Payments aggregate or domain. Loading the Account aggregate, and it being active will not retrigger these payments, thankfully.
+
+Whilst old context, address didn't change
+
+* Drawbacks and difficulties
+
+* Related patterns
+
+[[ {{< ref "corr-caus-ids.org" >}} ][Correlation and causation IDs]]
+
+* Software
+
+Event Store DB
+
+Kafka
