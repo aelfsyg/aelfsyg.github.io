@@ -1,7 +1,7 @@
 ---
 title: "Ukraine, the first 48 hours"
 date: 2022-02-25T17:04:39Z
-draft: false
+draft: true
 tags: [ "ukraine", "russia", "war" ]
 ---
 
@@ -13,7 +13,7 @@ As I said there, this is my attempt at a nonpartisan assembly and analysis of th
 ** Buildup
 As early as March 2021, Putin began amassing troops in the area. Their number would fluctuate but on the 10th of February 2022, Russia and Belarus initiated ten days of joint military exercises[fn:allied-resolve] between 30k Russian troops and almost all (~50k) Belarusian forces. /Allied Resolve 2022/ was due to conclude on the 20th, but when the date came Russia announced the exercises would continue. On the 21st of February, Russia recognised the two breakaway republics and sent in 'peacekeeping' forces. Between Belarus, the people's republics, Crimea, and the Russian–Ukrainian border, Russia had gathered 150–200k personnel in the area surrounding Ukraine.
 ** Movements
-[[https://upload.wikimedia.org/wikipedia/commons/4/4f/2022_Russian_invasion_of_Ukraine.svg]]
+[[https://upload.wikimedia.org/wikipedia/commons/archive/4/4f/20220226010802%212022_Russian_invasion_of_Ukraine.svg]]
 *** Commencement
 At 2022/02/24 06:00 UTC+3, Putin announced that Russia was launching a 'special military operation' in Ukraine with the purpose to 'demilitarise and de-Nazify Ukraine', and put an end to the war in Donbas.
 *** In the air

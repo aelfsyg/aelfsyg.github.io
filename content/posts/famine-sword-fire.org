@@ -1,7 +1,7 @@
 ---
 title: "Famine, Sword, and Fire"
 date: 2022-02-25T02:06:17Z
-draft: false
+draft: true
 tags: [ "ukraine", "russia", "war" ]
 ---
 
@@ -64,7 +64,7 @@ Separated from the Black Sea by the Crimean peninsula, connected to the Black Se
 ** Crimea
 A peninsula connected to the mainland by the Isthmus of Perekop. And seperated from southern Russia by the Kerch strait.
 ** Cities
-I have included some smaller cities because of their relevance to
+I have included some smaller cities because of their relevance to the conflict.
 - Kyiv :: 3.0M, north, 100 km from Belarus
 - Kharkiv :: 1.4M, east, 30 km from Russia
 - Odesa :: 1.0M, south-west, on the coast
